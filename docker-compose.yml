@@ -1,0 +1,43 @@
+services:
+    medical-reservation-nginx:
+        container_name: "medical-reservation-nginx"
+        build:
+            context: ./docker/nginx
+        depends_on:
+            - medical-reservation-app
+        ports:
+            - 80:80
+        volumes:
+            - ./:/src
+
+    medical-reservation-app:
+        container_name: "medical-reservation-app"
+        build:
+            context: ./docker/php
+        depends_on:
+            - medical-reservation-mysql
+        ports:
+            - 5173:5173
+        volumes:
+            - ./:/src
+            - /src/node_modules
+            - /src/vendor
+            - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+
+    medical-reservation-mysql:
+        image: mysql:8.0.37
+        command: --max_allowed_packet=32505856
+        container_name: "medical-reservation-mysql"
+        volumes:
+            - ./docker/mysql:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=medical-reservation
+        ports:
+            - 3306:3306
+
+    medical-reservation-redis:
+        image: redis:alpine
+        container_name: "medical-reservation-redis"
+        ports:
+            - 16379:6379
