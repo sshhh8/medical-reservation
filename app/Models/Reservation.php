@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Carbon\Carbon;
 
 class Reservation extends Model
 {
+    use CrudTrait;
     use HasFactory;
 
     protected $fillable = ['category_id','user_id','date'];
