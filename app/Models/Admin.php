@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Notifications\Notifiable;
 
-class Admin extends Model
+class Admin extends Authenticatable
 {
+    use CrudTrait;
     use Notifiable;
 
     protected $table = 'admins';
