@@ -20,7 +20,7 @@ class CategoryCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -28,48 +28,40 @@ class CategoryCrudController extends CrudController
         CRUD::setModel(\App\Models\Category::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/category');
         CRUD::setEntityNameStrings('category', 'categories');
+
+        $this->crud->setTitle('診療科');
+        $this->crud->setHeading('診療科');
+
+        CRUD::removeButton('create');
+        CRUD::orderBy('id');
+
     }
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        $this->data['breadcrumbs'] = [
+            'ダッシュボード' => backpack_url('dashboard'),
+            '診療科' => backpack_url('category'),
+            '一覧' => false,
+        ];
+
+        CRUD::column('id')->label('id');
+        CRUD::column('name')->label('科');
+
+        CRUD::removeButton('create');
+        CRUD::removeButton('update');
+        CRUD::removeButton('delete');
+        CRUD::removeButton('show');
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-    }
-
-    /**
-     * Define what happens when the Create operation is loaded.
-     * 
-     * @see https://backpackforlaravel.com/docs/crud-operation-create
-     * @return void
-     */
-    protected function setupCreateOperation()
-    {
-        CRUD::setFromDb(); // set fields from db columns.
-
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
-    }
-
-    /**
-     * Define what happens when the Update operation is loaded.
-     * 
-     * @see https://backpackforlaravel.com/docs/crud-operation-update
-     * @return void
-     */
-    protected function setupUpdateOperation()
-    {
-        $this->setupCreateOperation();
     }
 }

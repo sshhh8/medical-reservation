@@ -20,7 +20,7 @@ class AdminCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -28,17 +28,41 @@ class AdminCrudController extends CrudController
         CRUD::setModel(\App\Models\Admin::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/admin');
         CRUD::setEntityNameStrings('admin', 'admins');
+
+        $this->crud->setTitle('職員管理');
+        $this->crud->setHeading('職員管理');
+        $this->crud->setSubheading('新規登録', 'create');
+        $this->crud->setSubheading('編集', 'edit');
     }
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        $this->data['breadcrumbs'] = [
+            'ダッシュボード' => backpack_url('dashboard'),
+            '職員管理' => backpack_url('admin'),
+            '一覧' => false,
+        ];
+
+        CRUD::column('id')->label('職員番号');
+        CRUD::column('name')->label('氏名');
+        CRUD::column('category_id')
+            ->label('診療科')
+            ->type('select')
+            ->entity('categories')
+            ->attribute('name')
+            ->model("App\Models\Category")
+            ->searchLogic(function ($query, $column, $searchTerm) {
+                $query->orWhereHas('categories', function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', '%'.$searchTerm.'%');
+                });
+            });
+        CRUD::column('email')->label('email');
 
         /**
          * Columns can be defined using the fluent syntax:
@@ -48,13 +72,28 @@ class AdminCrudController extends CrudController
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
     protected function setupCreateOperation()
     {
-        CRUD::setFromDb(); // set fields from db columns.
+        $this->data['breadcrumbs'] = [
+            'ダッシュボード' => backpack_url('dashboard'),
+            '職員管理' => backpack_url('admin'),
+            '新規登録' => false,
+        ];
+
+        CRUD::field('name')->label('職員氏名')->validationRules('required');
+        CRUD::field('category_id')
+            ->label('診療科')
+            ->type('select')
+            ->entity('categories')
+            ->attribute('name')
+            ->model("App\Models\Category")
+            ->validationRules('required');
+        CRUD::field('email')->label('email')->validationRules('required|email|unique:users,email');
+        CRUD::field('password')->type('password')->label('パスワード')->validationRules('required');
 
         /**
          * Fields can be defined using the fluent syntax:
@@ -64,12 +103,29 @@ class AdminCrudController extends CrudController
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
     protected function setupUpdateOperation()
     {
+        $this->data['breadcrumbs'] = [
+            'ダッシュボード' => backpack_url('dashboard'),
+            '職員管理' => backpack_url('user'),
+            '編集' => false,
+        ];
+
         $this->setupCreateOperation();
+    }
+
+    protected function autoSetupShowOperation()
+    {
+        $this->data['breadcrumbs'] = [
+            'ダッシュボード' => backpack_url('dashboard'),
+            '職員管理' => backpack_url('user'),
+            '詳細' => false,
+        ];
+
+        $this->setupListOperation();
     }
 }
