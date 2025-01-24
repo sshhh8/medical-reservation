@@ -29,6 +29,14 @@
                             <li class="nav-item">
                                 <a class="nav-link" href='{{ route('profile.edit') }}' >マイページ</a>
                             </li>
+                            <li class="nav-item">
+                                <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-secondary btn-block" style="padding: 0; border: none; background: none;">
+                                        <img src="{{asset('img/logout.svg')}}" alt="ログアウト" style="width: 30px; height: auto;">
+                                    </button>
+                                </form>
+                            </li>
                         </ul>
                     </div>
                     <div class="nav-sp">
