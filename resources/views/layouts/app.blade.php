@@ -56,6 +56,12 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href='{{ route('profile.edit') }}' >マイページ</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <form action="{{ route('logout') }}" method="POST">
+                                            @csrf
+                                            <a class="nav-link" type="submit">ログアウト</a>
+                                        </form>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
